@@ -1,7 +1,11 @@
 package com.hand2font.model;
 
+import com.hand2font.model.enums.Permission;
 import jakarta.persistence.*;
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.UUID;
 
 @Entity
 @Table(name = "fonts")
@@ -10,6 +14,9 @@ public class Font {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
+    @Column(nullable = false, unique = true, updatable = false)
+    private String uuid;
 
     @Column(nullable = false)
     private String fontName;
@@ -25,8 +32,12 @@ public class Font {
     @Column(nullable = false)
     private String filePath;
 
+    @Enumerated(EnumType.STRING) // שומר ב-DB את המילה (למשל "PUBLIC") ולא מספר
     @Column(nullable = false)
-    private String permission; // public / private / restricted
+    private Permission permission = Permission.PRIVATE; // ערך ברירת מחדל בטוח
+
+    @OneToMany(mappedBy = "font", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<PermissionedPeople> permissionedPeople = new ArrayList<>();
 
     private LocalDate creationDate;
 
@@ -45,10 +56,24 @@ public class Font {
     @JoinColumn(name = "expression_style_id")
     private ExpressionStyle expressionStyle;
 
+    //UUID מתודה שיוצרת את השדה
+    @PrePersist
+    protected void onCreate() {
+        if (this.uuid == null) {
+            this.uuid = UUID.randomUUID().toString();
+        }
+        if (this.creationDate == null) {
+            this.creationDate = LocalDate.now();
+        }
+    }
+
 
     // ===== GETTERS & SETTERS =====
     public Long getId() { return id; }
     public void setId(Long id) { this.id = id; }
+
+    public String getUuid() { return uuid; }
+    public void setUuid(String uuid) { this.uuid = uuid; }
 
     public String getFontName() { return fontName; }
     public void setFontName(String fontName) { this.fontName = fontName; }
@@ -62,8 +87,8 @@ public class Font {
     public String getFilePath() { return filePath; }
     public void setFilePath(String filePath) { this.filePath = filePath; }
 
-    public String getPermission() { return permission; }
-    public void setPermission(String permission) { this.permission = permission; }
+    public Permission getPermission() { return permission; }
+    public void setPermission(Permission permission) { this.permission = permission; }
 
     public LocalDate getCreationDate() { return creationDate; }
     public void setCreationDate(LocalDate creationDate) { this.creationDate = creationDate; }
@@ -80,6 +105,8 @@ public class Font {
     public ExpressionStyle getExpressionStyle() { return expressionStyle; }
     public void setExpressionStyle(ExpressionStyle expressionStyle) { this.expressionStyle = expressionStyle; }
 
-
+    public List<PermissionedPeople> getPermissionedPeople() {
+        return permissionedPeople;
+    }
 
 }

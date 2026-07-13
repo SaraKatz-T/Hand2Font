@@ -11,8 +11,17 @@ public class GeometricStyle {
     private Long id;
 
     @Column(nullable = false, unique = true)
-    private String name; // עגול, נטוי, מחודד וכו
+    private String name;
 
+
+    public GeometricStyle() {}
+
+    public GeometricStyle(String name) {
+        this.name = name;
+    }
+
+
+    // Getters & Setters
     public Long getId() { return id; }
     public void setId(Long id) { this.id = id; }
 

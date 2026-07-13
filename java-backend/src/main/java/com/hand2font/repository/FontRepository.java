@@ -7,29 +7,29 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface FontRepository extends JpaRepository<Font, Long> {
 
-    List<Font> findByOwner(User owner);
+    // מיון לפי הבעלים - מהחדש לישן
+    List<Font> findByOwnerOrderByIdDesc(User owner);
 
     @Query("SELECT DISTINCT f FROM Font f " +
             "LEFT JOIN PermissionedPeople pp ON f.id = pp.font.id " +
-            "WHERE " +
-            "   f.permission = 'public' " +
-            "   OR f.owner.id = :userId " +
-            "   OR (f.permission = 'restricted' AND pp.user.id = :userId)")
-    List<Font> findAllAllowedFonts(@Param("userId") Long userId);
+            "WHERE f.owner.id = :userId " +
+            "OR LOWER(pp.email) = LOWER(:email) " +
+            "OR f.permission = 'PUBLIC' " +
+            "ORDER BY f.id DESC") // הוספנו מיון מהחדש לישן
+    List<Font> findAllAllowedFonts(@Param("userId") Long userId, @Param("email") String email);
 
-    // שליפה בודדת לבדיקת הרשאות בהורדה
     @Query("SELECT CASE WHEN COUNT(f) > 0 THEN true ELSE false END FROM Font f " +
             "LEFT JOIN PermissionedPeople pp ON f.id = pp.font.id " +
             "WHERE f.id = :fontId AND (" +
             "   f.permission = 'public' " +
             "   OR f.owner.id = :userId " +
-            "   OR (f.permission = 'restricted' AND pp.user.id = :userId)" +
+            "   OR (f.permission = 'restricted' AND pp.email = :userEmail)" +
             ")")
-    boolean hasPermission(@Param("fontId") Long fontId, @Param("userId") Long userId);
+    boolean hasPermission(@Param("fontId") Long fontId,
+                          @Param("userId") Long userId,
+                          @Param("userEmail") String userEmail);
 }
-
-
-

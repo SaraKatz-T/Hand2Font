@@ -1,0 +1,10 @@
+/venv
+/.idea
+**/output_svgs/
+/__pycache__
+*.pyc
+**/sorted_font_data/
+**/*.csv
+**/*.keras
+**/images/
+**/Handwriting_Output/

@@ -35,3 +35,14 @@ out/
 
 ### VS Code ###
 .vscode/
+# Environment variables
+.env
+.env.*
+
+# Security
+src/main/resources/keystore.p12
+*.p12
+
+# Logs
+logs/
+*.log

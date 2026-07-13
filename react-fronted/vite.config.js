@@ -6,12 +6,20 @@ export default defineConfig({
   plugins: [react()],
   server: {
     open: true, // <-- מוסיף פתיחה אוטומטית של הדפדפן
-       proxy: {
-      '/api': {
-        target: 'http://localhost:8080',
+    proxy: {
+      // אנחנו מגדירים את ה-proxy על הנתיב של ה-WebSocket בנפרד
+      '/api/ws-font-status': {
+        target: 'https://localhost:8443',
         changeOrigin: true,
-        secure: false
-      }
+        secure: false,
+        ws: true, // עכשיו זה אמור להיות תקין כי זה בתוך הגדרת נתיב ספציפי
+      },
+      // שאר ה-API הרגיל
+      '/api': {
+        target: 'https://localhost:8443',
+        changeOrigin: true,
+        secure: false,
+      },
     }
   },
   define: {

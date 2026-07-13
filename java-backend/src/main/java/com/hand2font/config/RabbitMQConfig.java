@@ -7,7 +7,7 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 public class RabbitMQConfig {
 
-    // שם התור שבו הפייתון יחפש עבודה
+    // התור שבו הפייתון יחפש עבודה
     public static final String FONT_TASKS_QUEUE = "font_tasks";
 
     // התור שבו הג'אווה מחכה לעדכוני סטטוס מהפייתון

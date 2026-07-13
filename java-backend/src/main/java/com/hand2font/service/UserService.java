@@ -19,7 +19,7 @@ public class UserService {
         this.passwordEncoder = passwordEncoder;
     }
 
-    // פונקציה לזיהוי המשתמש המחובר
+    // זיהוי המשתמש המחובר
     public User getAuthenticatedUser(Principal principal) {
         if (principal == null) {
             throw new RuntimeException("User not authenticated");
@@ -50,7 +50,6 @@ public class UserService {
         }
 
         currentUser.setFullName(userDetails.getFullName());
-        currentUser.setEmail(userDetails.getEmail());
 
         return userRepository.save(currentUser);
     }

@@ -14,9 +14,8 @@ public class PermissionedPeople {
     @JoinColumn(name = "font_id", nullable = false)
     private Font font;
 
-    @ManyToOne
-    @JoinColumn(name = "user_id", nullable = false)
-    private User user;
+    @Column(name = "email", nullable = false)
+    private String email;
 
     public Long getId() { return id; }
     public void setId(Long id) { this.id = id; }
@@ -24,6 +23,9 @@ public class PermissionedPeople {
     public Font getFont() { return font; }
     public void setFont(Font font) { this.font = font; }
 
-    public User getUser() { return user; }
-    public void setUser(User user) { this.user = user; }
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) { this.email = email; }
 }

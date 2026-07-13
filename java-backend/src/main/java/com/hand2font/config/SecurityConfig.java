@@ -42,8 +42,9 @@ public class SecurityConfig {
                 }))
                 .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/users/login", "/users/register").permitAll()
-                        .requestMatchers("/ws-font-status/**").permitAll()
+                        .requestMatchers("/api/users/login", "/api/users/register").permitAll()
+                        .requestMatchers("/api/ws-font-status/**").permitAll()
+                        .requestMatchers("/api/fonts/status/**").authenticated()
                         .anyRequest().authenticated()
                 )
                 .sessionManagement(session -> session

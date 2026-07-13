@@ -1,19 +1,23 @@
 package com.hand2font.controllers;
 
 import com.hand2font.config.JwtUtil;
+import com.hand2font.dto.FontDTO;
 import com.hand2font.model.Font;
 import com.hand2font.model.User;
 import com.hand2font.service.FontService;
 import com.hand2font.service.UserService;
+import com.hand2font.model.PermissionedPeople;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.security.Principal;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 @RestController
-@RequestMapping("/users")
+@RequestMapping("/api/users")
 public class UserController {
 
     private final UserService userService;
@@ -62,22 +66,49 @@ public class UserController {
     }
 
     @GetMapping("/me")
-    public ResponseEntity<?> getMe(Principal principal) {
-        try {
-            User user = userService.getAuthenticatedUser(principal);
-            List<Font> userFonts = fontService.getFontsByUser(user);
+    public ResponseEntity<?> getCurrentUser(Principal principal) {
+        User user = userService.getAuthenticatedUser(principal);
 
-            return ResponseEntity.ok(Map.of(
-                    "user", user,
-                    "fonts", userFonts
-            ));
-        } catch (Exception e) {
-            return ResponseEntity.status(401).body(Map.of("message", "Unauthorized"));
-        }
+        // 1. נשלוף רק את הפונטים שהמשתמש הוא הבעלים שלהם
+        List<Font> myRawFonts = fontService.getFontsByUser(user);
+
+        // 2. נהפוך אותם ל-DTO (כדי למנוע שגיאות JSON ולכלול את המיילים והנתונים החסרים)
+        List<FontDTO> myFontsDTO = myRawFonts.stream().map(font -> {
+            List<String> emails = font.getPermissionedPeople().stream()
+                    .map(PermissionedPeople::getEmail)
+                    .collect(Collectors.toList());
+
+            return new FontDTO(
+                    font.getId(),
+                    font.getFontName(),
+                    user.getFullName(), // הבעלים הוא המשתמש הנוכחי
+                    font.getStatus().name(),
+                    font.getFilePath(),
+                    font.getPermission().name(),
+                    emails,
+                    font.getGeometricStyle() != null ? font.getGeometricStyle().getName() : "Standard",
+                    font.getContentStyle() != null ? font.getContentStyle().getName() : "Standard",
+                    font.getExpressionStyle() != null ? font.getExpressionStyle().getName() : "Standard",
+                    font.getDownloadCount(),
+                    font.getCreationDate() != null ? font.getCreationDate().toString() : ""
+            );
+        }).collect(Collectors.toList());
+
+        // 3. בניית התשובה
+        Map<String, Object> response = new HashMap<>();
+        Map<String, Object> userMap = new HashMap<>();
+        userMap.put("id", user.getId());
+        userMap.put("fullName", user.getFullName());
+        userMap.put("email", user.getEmail());
+
+        response.put("user", userMap);
+        response.put("fonts", myFontsDTO); // עכשיו יופיעו רק הפונטים שלך!
+
+        return ResponseEntity.ok(response);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<?> updateUser(@PathVariable Long id, @RequestBody User userDetails, Principal principal) {
+    public ResponseEntity<?> updateUser(@PathVariable("id") Long id, @RequestBody User userDetails, Principal principal) {
         try {
             User updatedUser = userService.updateUser(id, userDetails, principal);
             return ResponseEntity.ok(updatedUser);

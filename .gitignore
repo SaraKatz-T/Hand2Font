@@ -60,4 +60,4 @@ lerna-debug.log*
 
 ### --- Logs --- ###
 logs/
-*.log
+*.loglocalhost.cer

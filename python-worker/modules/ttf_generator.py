@@ -4,9 +4,15 @@
 # -------------------------------
 import sys
 import os
-from config.settings import FONTFORGE_EXE
 
-fontforge_path = r"C:\Users\WIN 11\Downloads\FontForgePortable\App\FontForge\lib\python3.10\site-packages"
+fontforge_dir = os.path.dirname(os.path.dirname(sys.executable))
+fontforge_path = os.path.join(
+    fontforge_dir,
+    "lib",
+    "python3.10",
+    "site-packages"
+)
+
 if fontforge_path not in sys.path:
     sys.path.append(fontforge_path)
 
@@ -164,17 +170,15 @@ def create_ttf_from_svgs(svg_folder, output_path, font_name="ProjectFont"):
 # ---------------------------------------------------------------------------
 import subprocess
 
-def generate_ttf(svg_dir, output_path, font_name):
+def generate_ttf(fontforge_exe, svg_dir, output_path, font_name):
     script_path = os.path.abspath(__file__)
-    command = [FONTFORGE_EXE, script_path, svg_dir, output_path, font_name]
+    command = [fontforge_exe, script_path, svg_dir, output_path, font_name]
+
     try:
         subprocess.run(command, check=True)
-        print(f"[V] FontForge finished successfully.")
+        print("[V] FontForge finished successfully.")
     except Exception as e:
         print(f"[X] FontForge failed: {e}")
-
-
-
 
 
 
@@ -205,16 +209,12 @@ def generate_ttf(svg_dir, output_path, font_name):
 # __main__ — כשמופעל ישירות על ידי FontForge (דרך generate_ttf)
 # ---------------------------------------------------------------------------
 if __name__ == "__main__":
-    if len(sys.argv) <= 3:
-        print("[!] Running manual test...")
-        generate_ttf(
-            svg_dir="../modules/svg_builder/svg_output_Yael_Cohen_1_median",
-            output_path=r"C:\Users\WIN 11\Desktop\project\output\Yael_Cohen.ttf",
-            font_name="Yael_Cohen_1",
-        )
-    else:
+    if len(sys.argv) == 4:
         create_ttf_from_svgs(
             svg_folder=sys.argv[1],
             output_path=sys.argv[2],
             font_name=sys.argv[3],
         )
+    else:
+        print("[!] Usage:")
+        print("    ffpython ttf_generator.py <svg_folder> <output_path> <font_name>")

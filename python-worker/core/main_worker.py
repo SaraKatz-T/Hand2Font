@@ -125,7 +125,7 @@ def callback(ch, method, properties, body):
         process_averaged_letters_to_svg(paths["medoid"], paths["svgs"])
 
         print("[Main] Step 5: TTF generation...")
-        generate_ttf(paths["svgs"], target_path, font_name)
+        generate_ttf(FONTFORGE_EXE, paths["svgs"], target_path, font_name)
 
         if not os.path.exists(target_path):
             raise FileNotFoundError(f"TTF לא נוצר: {target_path}")

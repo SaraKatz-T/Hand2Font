@@ -3,6 +3,8 @@ venv/
 .venv/
 env/
 ENV/
+venv_old/
+venv_new/
 
 # Python cache
 __pycache__/
@@ -17,6 +19,7 @@ dist/
 # IDEs
 .idea/
 .vscode/
+.idea_old/
 
 # Logs
 *.log

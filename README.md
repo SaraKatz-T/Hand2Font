@@ -4,6 +4,9 @@ A Full-Stack AI-powered system for generating a personalized digital font from h
 
 **Hand2Font** was developed as a final academic project as part of a Software Engineering Practical Engineer program and received a final grade of **97 – Outstanding Excellence**.
 
+<img width="1104" height="352" alt="image" src="https://github.com/user-attachments/assets/c7ce90fb-7044-40cb-906f-0b9d021fca4b" />
+
+
 ## How It Works
 
 1. **Handwriting Upload** – The user uploads handwriting images to the system.

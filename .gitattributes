@@ -1,0 +1,12 @@
+# React configuration / metadata - exclude from GitHub language statistics
+react-frontend/package-lock.json linguist-generated=true
+react-frontend/package.json linguist-generated=true
+react-frontend/index.html linguist-generated=true
+react-frontend/vite.config.js linguist-generated=true
+react-frontend/eslint.config.js linguist-generated=true
+react-frontend/README.md linguist-documentation=true
+
+# Project documentation / configuration
+*.md linguist-documentation=true
+*.svg linguist-generated=true
+*.json linguist-generated=true
